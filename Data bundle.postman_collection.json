@@ -1,0 +1,170 @@
+{
+	"info": {
+		"_postman_id": "6add64a9-eef6-4a83-8876-43b98fbdc08f",
+		"name": "Data bundle",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Fetch airtime providers negative",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/airtime/providers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"airtime",
+						"providers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch airtime providers positive",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"pm.globals.get(\"variable_key\");",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"var easyMoney = JSON.parse(responseBody);",
+							"let jsonData = pm.response.json()",
+							"",
+							"for (const bill_id of jsonData.responseData) {",
+							"pm.test(\"Biller Ids are valid \", function () {",
+							"pm.expect(bill_id.billerId).to.be.a('number');",
+							"});",
+							"}",
+							"",
+							"for (const billCateg_id of jsonData.responseData) {",
+							"pm.test(\"BillCategoryIds are valid \", function () {",
+							"pm.expect(billCateg_id.billCategoryId).to.be.a('number');",
+							"});",
+							"}",
+							"for (const names of jsonData.responseData) {",
+							"pm.test(\"Service provider names are present\", function () {",
+							"pm.expect(names.name).to.be.a('string');",
+							"});",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/airtime/providers",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"airtime",
+						"providers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Valid response with status code 200\", function () {",
+							"     pm.response.to.have.status(200);",
+							"     pm.response.to.be.ok",
+							"});",
+							"",
+							"var easyMoni = JSON.parse(responseBody);",
+							"pm.test(\"Succces Message\", function () {",
+							"    pm.expect(easyMoni.message).to.eql('Successful')",
+							"});",
+							"",
+							"pm.test(\"Request is successful\", function () {",
+							"  pm.expect(easyMoni.requestSuccessful).to.eql(true)",
+							"});",
+							"",
+							"pm.test(\"First and Last names are present and not empty\", function () {",
+							"     pm.expect(easyMoni.responseData.firstName).to.eql('Nalat');",
+							"     pm.expect(easyMoni.responseData.lastName).to.eql('Muda');",
+							"});",
+							"",
+							"var accessToken = easyMoni.responseData.token.token",
+							"pm.environment.set(\"access_token\", accessToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"userName\": \"info@spaceso2o.com\",\n  \"password\": \"Rensource1$\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/Auth/login",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"Auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
